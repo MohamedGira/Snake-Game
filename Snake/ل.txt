@@ -1,0 +1,576 @@
+// snakeapptest.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include <iostream>
+#include <vector>
+#include <deque>
+#include <Windows.h>
+#include <math.h>
+#include <ctime>
+#include <conio.h>
+#include <map>
+
+/* Black */
+#define BACKGROUNDCOLOR 176
+#define RED 4 + BACKGROUNDCOLOR		/* Red */
+#define GREEN 2 + BACKGROUNDCOLOR	/* Green */
+#define YELLOW 6 + BACKGROUNDCOLOR	/* Yellow */
+#define BLUE 1 + BACKGROUNDCOLOR	/* Blue */
+#define MAGENTA 5 + BACKGROUNDCOLOR /* Magenta */
+#define CYAN 3 + BACKGROUNDCOLOR	/* Cyan */
+#define WHITE 7 + BACKGROUNDCOLOR	/* white */
+#define BIGHTYELLOW 14 + BACKGROUNDCOLOR
+#define BIGHTRED 12 + BACKGROUNDCOLOR
+
+#define WHITENOBACK 7 /* white */
+
+#pragma warning(disable : 4996)
+#define MAPWIDTH 14
+#define MAPHEIGHT 14
+
+using namespace std;
+class Position
+{
+private:
+	int x, y;
+
+public:
+	Position()
+	{
+		Position(0, 0);
+	}
+	Position(int x, int y) : x(x), y(y) {}
+	void SetX(int X)
+	{
+		x = X;
+	}
+	void SetY(int Y)
+	{
+		y = Y;
+	}
+	int GetX()
+	{
+		return x;
+	}
+	int GetY()
+	{
+		return y;
+	}
+};
+class Trophy
+{
+private:
+	Position position;
+
+public:
+	int color = BACKGROUNDCOLOR;
+	Trophy()
+	{
+	}
+
+	void setPosition(Position a)
+	{
+		position = a;
+	}
+
+	void GeneratePosition()
+	{
+		int xpos = 1 + rand() % (MAPWIDTH - 2);
+		int ypos = 1 + rand() % (MAPHEIGHT - 2);
+		position.SetX(xpos);
+		position.SetY(ypos);
+	}
+
+	Position GetPosition()
+	{
+		return position;
+	}
+};
+class Snake
+{
+private:
+	int length;
+	deque<Position> partsPosition;
+	int direction = 5;
+	map<char, int> MP;
+
+public:
+	Snake()
+	{
+		MP.insert({ 'w', 8 });
+		MP.insert({ 'a', 4 });
+		MP.insert({ 's', 2 });
+		MP.insert({ 'd', 6 });
+
+		length = 5;
+		for (int i = 1; i <= length; i++)
+		{
+			partsPosition.push_back(Position(i, 1));
+		}
+	}
+	deque<Position>* GetPartsPosition()
+	{
+		return &partsPosition;
+	}
+
+	int GetLength()
+	{
+		return length;
+	}
+
+	void IncrementLength()
+	{
+		length++;
+	}
+
+	void move(int direction)
+	{
+		switch (direction)
+		{
+		case 8:
+		{
+			partsPosition.pop_front();
+			int newpos = partsPosition.at(length - 2).GetY() - 1;
+			if (newpos == 0)
+				newpos = MAPHEIGHT - 2;
+			partsPosition.push_back(Position(partsPosition.at(length - 2).GetX(), newpos));
+			break;
+		}
+		case 2:
+		{
+			partsPosition.pop_front();
+			int newpos = partsPosition.at(length - 2).GetY() + 1;
+			if (newpos == MAPHEIGHT - 1)
+				newpos = 1;
+			partsPosition.push_back(Position(partsPosition.at(length - 2).GetX(), newpos));
+			break;
+		}
+		case 6:
+		{
+			partsPosition.pop_front();
+			int newpos = partsPosition.at(length - 2).GetX() + 1;
+			if (newpos == MAPWIDTH - 1)
+				newpos = 1;
+			partsPosition.push_back(Position(newpos, partsPosition.at(length - 2).GetY()));
+			break;
+		}
+		case 4:
+		{
+			partsPosition.pop_front();
+			int newpos = partsPosition.at(length - 2).GetX() - 1;
+			if (newpos == 0)
+				newpos = MAPWIDTH - 2;
+			partsPosition.push_back(Position(newpos, partsPosition.at(length - 2).GetY()));
+			break;
+		}
+		case 5:
+		{
+			cout << "Pres 2, 4, 6, or 8 to start." << endl;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	void getdirection()
+	{
+		cout << "Enter direction (W,A,S,D) :  ";
+		int x = getch();
+		char a = (char)x;
+		a = tolower(a);
+		cout << "\n";
+		move(MP[a]);
+	}
+};
+class ColoerdChar
+{
+public:
+	char Char;
+	int color = BIGHTYELLOW;
+};
+class Map
+{
+private:
+	Snake A;
+	Trophy trophy;
+	bool trophyexist = false;
+	int score = 0;
+	ColoerdChar mapmatrix[MAPHEIGHT][MAPWIDTH];
+	vector<Position>Emptyplaces;
+	void GenerateTrophy(vector<Position> Emptyplaces) {
+		if (Emptyplaces.size() == 0)
+		{
+			HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+
+			Won = true;
+
+			throw range_error("YOU WON!!");
+			return;
+		}
+
+		else {
+		int pos = rand() % Emptyplaces.size();
+		Position trophypos = Emptyplaces.at(pos);
+		trophy.setPosition(trophypos);
+		}
+	}
+
+
+public:
+	bool Won=false;
+	Map() {};
+	/*void fastplay()
+	{
+
+		deque<Position>* R = A.GetPartsPosition();
+
+
+		//while (!trophyexist)
+		//{
+		//	//cout << "Creating trophy" << endl;
+		//	trophy.GeneratePosition();
+		//	trophyexist = true;
+		//	for (auto& e : *R)
+		//	{
+		//		if (e.GetX() == trophy.GetPosition().GetX() &&
+		//			e.GetY() == trophy.GetPosition().GetY())
+		//		{
+		//			trophyexist = false;
+		//			break;
+		//		}
+		//	}
+		//}
+
+		mapmatrix[trophy.GetPosition().GetY()]
+			[trophy.GetPosition().GetX()]
+		.Char = 233;
+		mapmatrix[trophy.GetPosition().GetY()]
+			[trophy.GetPosition().GetX()]
+		.color = trophy.color;
+
+		char dafualt = 219;
+		//223 top //220bottom" //219 vertical
+		// i==0 tail
+		Position h = R->at(R->size() - 1);
+
+		//  mapmatrix[h.GetY()][h.GetX()].color = GREEN;
+
+		int len = A.GetLength();
+
+		Position head = R->at(len - 1);
+
+		if (trophy.GetPosition().GetX() == head.GetX() &&
+			trophy.GetPosition().GetY() == head.GetY())
+		{
+			trophyexist = false;
+			A.IncrementLength();
+			score++;
+			mapmatrix[trophy.GetPosition().GetY()][trophy.GetPosition().GetX()].Char = ' ';
+			R->push_front(Position(R->at(0).GetX(), R->at(0).GetY()));
+		}
+	}
+	void printfastplaymap()
+	{
+		HANDLE color = GetStdHandle(STD_OUTPUT_HANDLE); //just once
+
+		for (int i = 0; i < MAPHEIGHT; i++)
+		{
+			for (int j = 0; j < MAPWIDTH; j++)
+			{
+				SetConsoleTextAttribute(color, mapmatrix[i][j].color);
+
+				cout << mapmatrix[i][j].Char;
+				SetConsoleTextAttribute(color, 7);
+			}
+			cout << "\n";
+		}
+		cout << "Score: " << score << endl;
+	}*/
+	void printmap()
+	{
+
+		for (int i = 0; i < MAPHEIGHT; i++)
+		{
+			for (int j = 0; j < MAPWIDTH; j++)
+			{
+				mapmatrix[i][j].Char = ' ';
+			}
+		}
+		for (int i = 0; i < MAPHEIGHT; i++)
+		{
+			mapmatrix[i][0].Char = 219;
+			mapmatrix[i][0].color = RED;
+			mapmatrix[i][MAPWIDTH - 1].Char = 219;
+			mapmatrix[i][MAPWIDTH - 1].color = RED;
+		}
+		for (int j = 0; j < MAPWIDTH; j++)
+		{
+			mapmatrix[0][j].Char = 219;
+			mapmatrix[0][j].color = RED;
+			mapmatrix[MAPHEIGHT - 1][j].Char = 219;
+			mapmatrix[MAPHEIGHT - 1][j].color = RED;
+		}
+		mapmatrix[MAPHEIGHT - 1][0].Char = 219;
+		mapmatrix[MAPHEIGHT - 1][MAPWIDTH - 1].Char = 219;
+
+		mapmatrix[MAPHEIGHT - 1][0].color = RED;
+		mapmatrix[MAPHEIGHT - 1][MAPWIDTH - 1].color = RED;
+
+		deque<Position>* R = A.GetPartsPosition();
+
+		//while (!trophyexist)
+		//{
+		//	//cout << "Creating trophy" << endl;
+		//	trophy.GeneratePosition();
+		//	trophyexist = true;
+		//	for (auto& e : *R)
+		//	{
+		//		if (e.GetX() == trophy.GetPosition().GetX() &&
+		//			e.GetY() == trophy.GetPosition().GetY())
+		//		{
+		//			trophyexist = false;
+		//			break;
+		//		}
+		//	}
+		//}
+
+		
+		char dafualt = 219;
+		//223 top //220bottom" //219 vertical
+		// i==0 tail
+
+		
+
+		Position h = R->at(R->size() - 1);
+		mapmatrix[h.GetY()][h.GetX()].Char = dafualt;
+
+		for (int i = 0; i < R->size(); i++)
+		{
+			Position e = R->at(i);
+			//2486
+			mapmatrix[e.GetY()][e.GetX()].Char = dafualt;
+			mapmatrix[e.GetY()][e.GetX()].color = BIGHTYELLOW;
+		}
+
+		
+		if (!trophyexist) {
+			for (int i = 0; i < MAPHEIGHT; i++)
+			{
+				for (int j = 0; j < MAPWIDTH; j++)
+				{
+					if (mapmatrix[i][j].Char == ' ') {
+						Emptyplaces.push_back(Position(j, i));
+					}
+				}
+			}
+			GenerateTrophy(Emptyplaces);
+			Emptyplaces.clear();
+			trophyexist = true;
+		}
+
+
+		mapmatrix[trophy.GetPosition().GetY()]
+			[trophy.GetPosition().GetX()]
+		.Char = 233;
+		mapmatrix[trophy.GetPosition().GetY()]
+			[trophy.GetPosition().GetX()]
+		.color = trophy.color;
+		mapmatrix[h.GetY()][h.GetX()].color = BIGHTRED;
+		mapmatrix[h.GetY()][h.GetX()].Char = dafualt;
+
+
+
+
+
+		HANDLE color = GetStdHandle(STD_OUTPUT_HANDLE); //just once
+
+		for (int i = 0; i < MAPHEIGHT; i++)
+		{
+			for (int j = 0; j < MAPWIDTH; j++)
+			{
+				SetConsoleTextAttribute(color, mapmatrix[i][j].color);
+
+				cout << mapmatrix[i][j].Char;
+				SetConsoleTextAttribute(color, 7);
+			}
+			cout << "\n";
+		}
+		cout << "Score: " << score << endl;
+
+		int len = A.GetLength();
+		Position head = R->at(len - 1);
+		for (int i = 0; i < len - 1; i++)
+		{
+			Position e = R->at(i);
+			if (e.GetY() == head.GetY() && e.GetX() == head.GetX())
+			{
+				throw invalid_argument("Game Over\n");
+			}
+		}
+		if (trophy.GetPosition().GetX() == head.GetX() &&
+			trophy.GetPosition().GetY() == head.GetY())
+		{
+			trophyexist = false;
+			A.IncrementLength();
+			score++;
+
+			R->push_front(Position(R->at(0).GetX(), R->at(0).GetY()));
+		}
+	}
+	Snake* GetSnake()
+	{
+		return &A;
+	}
+};
+int main()
+{
+
+	srand(time(0));
+
+	HWND A = GetConsoleWindow();
+	RECT ConsoleRect;
+	GetWindowRect(A, &ConsoleRect);
+
+	MoveWindow(A, ConsoleRect.left, ConsoleRect.top, 800, 1600, TRUE);
+
+	COORD D;
+	COORD* L = new COORD();
+	D.X = 20;
+	D.Y = 20;
+
+	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	//SetConsoleDisplayMode(console, CONSOLE_FULLSCREEN_MODE, L);
+
+	PCONSOLE_FONT_INFOEX a = new CONSOLE_FONT_INFOEX;
+
+	a->cbSize = sizeof(CONSOLE_FONT_INFOEX);
+	a->dwFontSize = D;
+	a->FontWeight = 100;
+	a->FontFamily = TMPF_VECTOR;
+
+	SetCurrentConsoleFontEx(console, false, a);
+
+	cout << "Welcome.   1)automatic -  2) maniual\n";
+
+	Sleep(500);
+	char x; 
+	x = getch();
+	//cout << "For better experince, maximize the window size.\n";
+	//Sleep(500);
+	Map map;
+
+	map.printmap();
+
+	COORD corrd;
+	corrd.X = 0;
+	corrd.Y = 1;
+
+	COORD corrdd;
+	corrdd.X = 0;
+	corrdd.Y = 1;
+
+	if (x == '1') {
+	SetConsoleCursorPosition(console, corrd);
+
+
+	for (int i = 5; i <= MAPWIDTH - 2; i++)
+	{
+		map.GetSnake()->move(6);
+		SetConsoleCursorPosition(console, corrdd);
+		map.printmap();
+	}
+	//solve automatic
+
+	int length = map.GetSnake()->GetLength();
+	int max = (MAPWIDTH - 2) * (MAPHEIGHT - 3);
+	while (length < max)
+	{
+		length = map.GetSnake()->GetLength();
+		SetConsoleCursorPosition(console, corrd);
+		//cout << " length:  " << length << "/" << max<<endl;
+		for (int i = 1; i < MAPWIDTH - 2; i++)
+		{
+			map.GetSnake()->move(6);
+			SetConsoleCursorPosition(console, corrdd);
+			map.printmap();
+		}
+		map.GetSnake()->move(2);
+		SetConsoleCursorPosition(console, corrdd);
+		map.printmap();
+		for (int i = 1; i < MAPWIDTH - 2; i++)
+		{
+			map.GetSnake()->move(4);
+			SetConsoleCursorPosition(console, corrdd);
+			map.printmap();
+		}
+
+		map.GetSnake()->move(2);
+
+		SetConsoleCursorPosition(console, corrdd);
+		map.printmap();
+	}
+	}
+
+	
+	COORD cong;
+	cong.X = 5;
+	cong.Y = MAPHEIGHT + 5;
+
+	while (!map.Won)
+	{
+		map.GetSnake()->getdirection();
+
+		try
+		{
+			SetConsoleCursorPosition(console, corrd);
+			if (!map.Won) {
+			map.printmap();
+			}
+		}
+		catch (invalid_argument& e)
+		{
+
+
+			SetConsoleTextAttribute(console, RED - BACKGROUNDCOLOR);
+			COORD cong;
+			cong.X = 5;
+			cong.Y = MAPHEIGHT + 5;
+
+			SetConsoleCursorPosition(console, cong);
+
+			for (int i = 0; i < 3; i++) {
+				SetConsoleCursorPosition(console, cong);
+				cout << e.what();
+				Sleep(700);
+				SetConsoleCursorPosition(console, cong);
+				cout << "          ";
+				Sleep(700);
+			}			
+			SetConsoleTextAttribute(console, WHITENOBACK);
+			break;
+
+		}
+		catch (range_error& e) {
+		
+			SetConsoleTextAttribute(console, GREEN - BACKGROUNDCOLOR);
+			
+			SetConsoleCursorPosition(console, cong);
+
+			for (int i = 0; i < 3; i++) {
+				SetConsoleCursorPosition(console, cong);
+				cout << e.what();
+				Sleep(700);
+				SetConsoleCursorPosition(console, cong);
+				cout << "         ";
+				Sleep(700);
+			}break;
+		}
+	}
+
+	SetConsoleTextAttribute(console, WHITENOBACK);
+	cong.X = 0;
+	SetConsoleCursorPosition(console, cong);
+	system("pause");
+
+}

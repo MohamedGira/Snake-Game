@@ -1,0 +1,19 @@
+﻿  snakeapptest.cpp
+C:\Users\Gira\source\repos\Snake\snakeapptest.cpp(265,36): warning C4309: '=': truncation of constant value
+C:\Users\Gira\source\repos\Snake\snakeapptest.cpp(267,47): warning C4309: '=': truncation of constant value
+C:\Users\Gira\source\repos\Snake\snakeapptest.cpp(272,36): warning C4309: '=': truncation of constant value
+C:\Users\Gira\source\repos\Snake\snakeapptest.cpp(274,48): warning C4309: '=': truncation of constant value
+C:\Users\Gira\source\repos\Snake\snakeapptest.cpp(277,44): warning C4309: '=': truncation of constant value
+C:\Users\Gira\source\repos\Snake\snakeapptest.cpp(278,55): warning C4309: '=': truncation of constant value
+C:\Users\Gira\source\repos\Snake\snakeapptest.cpp(288,24): warning C4309: 'initializing': truncation of constant value
+C:\Users\Gira\source\repos\Snake\snakeapptest.cpp(295,27): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Gira\source\repos\Snake\snakeapptest.cpp(331,24): warning C4309: 'initializing': truncation of constant value
+C:\Users\Gira\source\repos\Snake\snakeapptest.cpp(385,25): warning C4309: '=': truncation of constant value
+C:\Users\Gira\source\repos\Snake\snakeapptest.cpp(437,24): warning C4309: 'initializing': truncation of constant value
+C:\Users\Gira\source\repos\Snake\snakeapptest.cpp(487,25): warning C4309: '=': truncation of constant value
+C:\Users\Gira\source\repos\Snake\snakeapptest.cpp(541,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Generating code
+  Previous IPDB and IOBJ mismatch, fall back to full compilation.
+  All 1151 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  snakeapptest.vcxproj -> C:\Users\Gira\source\repos\Snake\Release\snakeapptest.exe
